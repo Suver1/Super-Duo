@@ -14,6 +14,12 @@ import android.view.SurfaceView;
 
 import java.io.IOException;
 
+/*
+Note: Even though the old Camera API (android.hardware.Camera which is replaced by android.
+hardware.Camera2) is marked as deprecated, it is still fully functional, and will remain so for
+quite a while. If you want to support Android versions earlier that 21, you have to use the old API.
+*/
+
 /** A basic Camera preview class */
 public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
     private SurfaceHolder mHolder;
