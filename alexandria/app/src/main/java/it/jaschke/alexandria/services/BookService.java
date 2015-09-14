@@ -95,6 +95,8 @@ public class BookService extends IntentService {
         BufferedReader reader = null;
         String bookJsonString = null;
 
+        // TODO check internet connection!
+
         try {
             final String FORECAST_BASE_URL = "https://www.googleapis.com/books/v1/volumes?";
             final String QUERY_PARAM = "q";
