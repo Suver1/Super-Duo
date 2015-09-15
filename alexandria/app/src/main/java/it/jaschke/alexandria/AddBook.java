@@ -97,13 +97,12 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
                 // Hint: Use a Try/Catch block to handle the Intent dispatch gracefully, if you
                 // are using an external app.
                 //when you're done, remove the toast below.
+
                 Context context = getActivity();
-                CharSequence text = "This button should let you scan a book for its barcode!";
-                int duration = Toast.LENGTH_SHORT;
+                CharSequence text = "Opening barcode scanner...";
+                Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
 
-                Toast toast = Toast.makeText(context, text, duration);
-                toast.show();
-
+                startActivity(new Intent(context, ScannerActivity.class));
             }
         });
 
