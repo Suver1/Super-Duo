@@ -1,10 +1,15 @@
 package it.jaschke.alexandria;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import me.dm7.barcodescanner.zbar.BarcodeFormat;
 import me.dm7.barcodescanner.zbar.Result;
 import me.dm7.barcodescanner.zbar.ZBarScannerView;
 
@@ -21,6 +26,11 @@ public class ScannerActivity extends ActionBarActivity implements ZBarScannerVie
     public void onCreate(Bundle state) {
         super.onCreate(state);
         mScannerView = new ZBarScannerView(this);
+        // Set scan format
+        List<BarcodeFormat> formats = new ArrayList<>();
+        formats.add(BarcodeFormat.EAN13);
+        mScannerView.setFormats(formats);
+
         setContentView(mScannerView);
     }
 
@@ -39,9 +49,12 @@ public class ScannerActivity extends ActionBarActivity implements ZBarScannerVie
 
     @Override
     public void handleResult(Result rawResult) {
-        Toast.makeText(this, "Contents = " + rawResult.getContents() +
-                ", Format = " + rawResult.getBarcodeFormat().getName(), Toast.LENGTH_SHORT).show();
-        mScannerView.startCamera();
-        // TODO send result back to MainActivity's AddBook fragment
+        if (rawResult.getContents() != null && rawResult.getContents().startsWith("978")) {
+            Toast.makeText(this, "Searching...", Toast.LENGTH_SHORT).show();
+            setResult(0, new Intent().putExtra("EAN13", rawResult.getContents()));
+            finish();
+        } else {
+            mScannerView.startCamera();
+        }
     }
 }

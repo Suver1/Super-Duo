@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -20,14 +21,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
 import it.jaschke.alexandria.data.AlexandriaContract;
 import it.jaschke.alexandria.services.BookService;
 import it.jaschke.alexandria.services.DownloadImage;
 
 
 public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
-    private static final String TAG = "INTENT_TO_SCAN_ACTIVITY";
+    private static final String LOG_TAG = ScannerActivity.class.getSimpleName();
     private EditText ean;
     private final int LOADER_ID = 1;
     private View rootView;
@@ -37,8 +37,6 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
 
     private String mScanFormat = "Format:";
     private String mScanContents = "Contents:";
-
-
 
     public AddBook(){
     }
@@ -102,7 +100,7 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
                 CharSequence text = "Opening barcode scanner...";
                 Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
 
-                startActivity(new Intent(context, ScannerActivity.class));
+                startActivityForResult(new Intent(context, ScannerActivity.class), 0);
             }
         });
 
@@ -133,12 +131,18 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
     }
 
     private void restartLoader(){
-        getLoaderManager().restartLoader(LOADER_ID, null, this);
+        Loader<Object> loader = getLoaderManager().getLoader(LOADER_ID);
+        if (loader != null && !loader.isReset()) {
+            getLoaderManager().restartLoader(LOADER_ID, null, this);
+        } else {
+            getLoaderManager().initLoader(LOADER_ID, null, this);
+        }
     }
 
     @Override
     public android.support.v4.content.Loader<Cursor> onCreateLoader(int id, Bundle args) {
         if(ean.getText().length()==0){
+            Log.e(LOG_TAG, "could not get ean...");
             return null;
         }
         String eanStr= ean.getText().toString();
@@ -167,7 +171,7 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
         ((TextView) rootView.findViewById(R.id.bookSubTitle)).setText(bookSubTitle);
 
         String authors = data.getString(data.getColumnIndex(AlexandriaContract.AuthorEntry.AUTHOR));
-        Log.v(TAG, authors);
+        Log.v(LOG_TAG, authors);
         String[] authorsArr = authors.split(","); // TODO: Why was this null?
         ((TextView) rootView.findViewById(R.id.authors)).setLines(authorsArr.length);
         ((TextView) rootView.findViewById(R.id.authors)).setText(authors.replace(",", "\n"));
@@ -203,5 +207,14 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         activity.setTitle(R.string.scan);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // Set ean in the edit text field, which in turn triggers search.
+        ean.setText(data.getExtras().getString("EAN13"));
+        ean.setHint("");
     }
 }
