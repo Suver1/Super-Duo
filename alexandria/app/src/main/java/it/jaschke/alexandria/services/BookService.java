@@ -2,11 +2,15 @@ package it.jaschke.alexandria.services;
 
 import android.app.IntentService;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -95,8 +99,10 @@ public class BookService extends IntentService {
         BufferedReader reader = null;
         String bookJsonString = null;
 
-        // TODO check internet connection!
-
+        // Check internet connection
+        if (!isOnline()) {
+            return;
+        }
         try {
             final String FORECAST_BASE_URL = "https://www.googleapis.com/books/v1/volumes?";
             final String QUERY_PARAM = "q";
@@ -131,7 +137,7 @@ public class BookService extends IntentService {
             }
             bookJsonString = buffer.toString();
         } catch (Exception e) {
-            Log.e(LOG_TAG, "Error ", e);
+            Log.e(LOG_TAG, "Error " + e);
         } finally {
             if (urlConnection != null) {
                 urlConnection.disconnect();
@@ -143,13 +149,13 @@ public class BookService extends IntentService {
                     Log.e(LOG_TAG, "Error closing stream", e);
                 }
             }
-
         }
-
+        if (bookJsonString == null) {
+            broadcastNoResult();
+            return;
+        }
         final String ITEMS = "items";
-
         final String VOLUME_INFO = "volumeInfo";
-
         final String TITLE = "title";
         final String SUBTITLE = "subtitle";
         final String AUTHORS = "authors";
@@ -164,9 +170,7 @@ public class BookService extends IntentService {
             if (bookJson.has(ITEMS)){
                 bookArray = bookJson.getJSONArray(ITEMS);
             } else {
-                Intent messageIntent = new Intent(MainActivity.MESSAGE_EVENT);
-                messageIntent.putExtra(MainActivity.MESSAGE_KEY,getResources().getString(R.string.not_found));
-                LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(messageIntent);
+                broadcastNoResult();
                 return;
             }
 
@@ -230,6 +234,26 @@ public class BookService extends IntentService {
             values.put(AlexandriaContract.CategoryEntry.CATEGORY, jsonArray.getString(i));
             getContentResolver().insert(AlexandriaContract.CategoryEntry.CONTENT_URI, values);
             values= new ContentValues();
+        }
+    }
+
+    private void broadcastNoResult() {
+        Intent messageIntent = new Intent(MainActivity.MESSAGE_EVENT);
+        messageIntent.putExtra(MainActivity.MESSAGE_KEY,getResources().getString(R.string.not_found));
+        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(messageIntent);
+    }
+
+    // Check the Network Connection. (permission needed)
+    // Source: http://developer.android.com/intl/ko/training/basics/network-ops/connecting.html
+    private Boolean isOnline() {
+        ConnectivityManager connMgr = (ConnectivityManager)
+                getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        if (networkInfo != null && networkInfo.isConnected()) {
+            return true;
+        } else {
+            Toast.makeText(this, "Network connection lost. Please reconnect.", Toast.LENGTH_LONG).show();
+            return false;
         }
     }
  }

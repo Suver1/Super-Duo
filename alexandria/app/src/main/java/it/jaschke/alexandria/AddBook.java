@@ -77,6 +77,10 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
                     clearFields();
                     return;
                 }
+                // Check internet connection
+                if (!((MainActivity)getActivity()).isOnline()) {
+                    return;
+                }
                 //Once we have an ISBN, start a book intent
                 Intent bookIntent = new Intent(getActivity(), BookService.class);
                 bookIntent.putExtra(BookService.EAN, ean);
