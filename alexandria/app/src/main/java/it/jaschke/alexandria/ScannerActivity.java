@@ -8,6 +8,11 @@ import android.widget.Toast;
 import me.dm7.barcodescanner.zbar.Result;
 import me.dm7.barcodescanner.zbar.ZBarScannerView;
 
+/*
+ * Class that lets users scan barcodes.
+ * Source and instructions: https://github.com/dm77/barcodescanner
+ */
+
 public class ScannerActivity extends ActionBarActivity implements ZBarScannerView.ResultHandler {
     private static final String LOG_TAG = ScannerActivity.class.getSimpleName();
     private ZBarScannerView mScannerView;
