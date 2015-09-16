@@ -27,8 +27,9 @@ import it.jaschke.alexandria.services.DownloadImage;
 
 
 public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
-    private static final String LOG_TAG = ScannerActivity.class.getSimpleName();
+    private static final String LOG_TAG = AddBook.class.getSimpleName();
     private EditText ean;
+    private String lastEan;
     private final int LOADER_ID = 1;
     private View rootView;
     private final String EAN_CONTENT="eanContent";
@@ -44,7 +45,7 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        if(ean!=null) {
+        if (ean != null) {
             outState.putString(EAN_CONTENT, ean.getText().toString());
         }
     }
@@ -68,20 +69,25 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
 
             @Override
             public void afterTextChanged(Editable s) {
-                String ean =s.toString();
-                //catch isbn10 numbers
-                if(ean.length()==10 && !ean.startsWith("978")){
-                    ean="978"+ean;
+                String ean = s.toString();
+                // Catch ISBN10 numbers
+                if (ean.length() == 10 && !ean.startsWith("978")) {
+                    ean = "978" + ean;
                 }
-                if(ean.length()<13){
-                    clearFields();
+                if (ean.length() < 13) {
+                    // Clear field unless a book has been loaded earlier
+                    if (rootView.findViewById(R.id.bookTitle) == null) {
+                        clearFields();
+                    }
                     return;
                 }
                 // Check internet connection
                 if (!((MainActivity)getActivity()).isOnline()) {
                     return;
                 }
-                //Once we have an ISBN, start a book intent
+                // Save the last ean found
+                lastEan = ean;
+                // Once we have an ISBN, start a book intent
                 Intent bookIntent = new Intent(getActivity(), BookService.class);
                 bookIntent.putExtra(BookService.EAN, ean);
                 bookIntent.setAction(BookService.FETCH_BOOK);
@@ -95,10 +101,10 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
             public void onClick(View v) {
                 // This is the callback method that the system will invoke when your button is
                 // clicked. You might do this by launching another app or by including the
-                //functionality directly in this app.
+                // functionality directly in this app.
                 // Hint: Use a Try/Catch block to handle the Intent dispatch gracefully, if you
                 // are using an external app.
-                //when you're done, remove the toast below.
+                // when you're done, remove the toast below.
 
                 Context context = getActivity();
                 CharSequence text = "Opening barcode scanner...";
@@ -112,21 +118,26 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
             @Override
             public void onClick(View view) {
                 ean.setText("");
+                ean.setHint(getResources().getString(R.string.input_hint));
             }
         });
 
         rootView.findViewById(R.id.delete_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent bookIntent = new Intent(getActivity(), BookService.class);
-                bookIntent.putExtra(BookService.EAN, ean.getText().toString());
-                bookIntent.setAction(BookService.DELETE_BOOK);
-                getActivity().startService(bookIntent);
-                ean.setText("");
+                if (lastEan != null) {
+                    Intent bookIntent = new Intent(getActivity(), BookService.class);
+                    bookIntent.putExtra(BookService.EAN, lastEan);
+                    bookIntent.setAction(BookService.DELETE_BOOK);
+                    getActivity().startService(bookIntent);
+                    ean.setText("");
+                    ean.setHint(getResources().getString(R.string.input_hint));
+                    clearFields();
+                }
             }
         });
 
-        if(savedInstanceState!=null){
+        if(savedInstanceState != null){
             ean.setText(savedInstanceState.getString(EAN_CONTENT));
             ean.setHint("");
         }
@@ -145,17 +156,13 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
 
     @Override
     public android.support.v4.content.Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        if(ean.getText().length()==0){
-            Log.e(LOG_TAG, "could not get ean...");
+        if(lastEan == null || lastEan.length() != 13) {
+            Log.e(LOG_TAG, "lastEan is not valid");
             return null;
-        }
-        String eanStr= ean.getText().toString();
-        if(eanStr.length()==10 && !eanStr.startsWith("978")){
-            eanStr="978"+eanStr;
         }
         return new CursorLoader(
                 getActivity(),
-                AlexandriaContract.BookEntry.buildFullBookUri(Long.parseLong(eanStr)),
+                AlexandriaContract.BookEntry.buildFullBookUri(Long.parseLong(lastEan)),
                 null,
                 null,
                 null,

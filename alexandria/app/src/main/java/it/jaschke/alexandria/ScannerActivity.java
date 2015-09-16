@@ -16,6 +16,9 @@ import me.dm7.barcodescanner.zbar.ZBarScannerView;
 /*
  * Class that lets users scan barcodes.
  * Source and instructions: https://github.com/dm77/barcodescanner
+ *
+ * NOTE: There is a memory leak issue with this zbar library?
+ * http://stackoverflow.com/questions/26375920/android-performing-stop-of-activity-that-is-not-resumed#answer-26379590
  */
 
 public class ScannerActivity extends ActionBarActivity implements ZBarScannerView.ResultHandler {
