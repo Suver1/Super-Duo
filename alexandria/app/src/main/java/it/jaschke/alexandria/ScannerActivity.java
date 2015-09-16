@@ -19,6 +19,8 @@ import me.dm7.barcodescanner.zbar.ZBarScannerView;
  *
  * NOTE: There is a memory leak issue with this zbar library?
  * http://stackoverflow.com/questions/26375920/android-performing-stop-of-activity-that-is-not-resumed#answer-26379590
+ * Perhaps this is the solution:
+ * http://stackoverflow.com/questions/21947675/android-4-4-2-java-lang-runtimeexception-performing-stop-of-activity-that-is#answer-23246159
  */
 
 public class ScannerActivity extends ActionBarActivity implements ZBarScannerView.ResultHandler {
