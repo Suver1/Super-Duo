@@ -29,7 +29,7 @@ import it.jaschke.alexandria.services.DownloadImage;
 public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final String LOG_TAG = AddBook.class.getSimpleName();
     private EditText ean;
-    private String lastEan;
+    private String loadedEan;
     private final int LOADER_ID = 1;
     private View rootView;
     private final String EAN_CONTENT="eanContent";
@@ -47,6 +47,9 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
         super.onSaveInstanceState(outState);
         if (ean != null) {
             outState.putString(EAN_CONTENT, ean.getText().toString());
+        }
+        if (loadedEan != null) {
+            outState.putString("loadedEan", loadedEan);
         }
     }
 
@@ -86,13 +89,9 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
                     return;
                 }
                 // Save the last ean found
-                lastEan = ean;
+                loadedEan = ean;
                 // Once we have an ISBN, start a book intent
-                Intent bookIntent = new Intent(getActivity(), BookService.class);
-                bookIntent.putExtra(BookService.EAN, ean);
-                bookIntent.setAction(BookService.FETCH_BOOK);
-                getActivity().startService(bookIntent);
-                AddBook.this.restartLoader();
+                startBookIntent(loadedEan);
             }
         });
 
@@ -120,6 +119,7 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
                 ean.setText("");
                 ean.setHint(getResources().getString(R.string.input_hint));
                 clearFields();
+                loadedEan = null;
 
                 CharSequence text = "The book was saved in your list of books.";
                 Toast.makeText(getActivity(), text, Toast.LENGTH_SHORT).show();
@@ -129,27 +129,39 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
         rootView.findViewById(R.id.delete_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (lastEan != null) {
+                if (loadedEan != null) {
                     Intent bookIntent = new Intent(getActivity(), BookService.class);
-                    bookIntent.putExtra(BookService.EAN, lastEan);
+                    bookIntent.putExtra(BookService.EAN, loadedEan);
                     bookIntent.setAction(BookService.DELETE_BOOK);
                     getActivity().startService(bookIntent);
                     ean.setText("");
                     ean.setHint(getResources().getString(R.string.input_hint));
                     clearFields();
+                    loadedEan = null;
                 }
             }
         });
 
-        if(savedInstanceState != null){
-            ean.setText(savedInstanceState.getString(EAN_CONTENT));
-            ean.setHint("");
+        if (savedInstanceState != null) {
+            loadedEan = savedInstanceState.getString("loadedEan");
+            String currentEan = savedInstanceState.getString(EAN_CONTENT);
+            if (loadedEan != null && !loadedEan.equals(currentEan)) {
+                startBookIntent(loadedEan);
+            }
         }
 
         return rootView;
     }
 
-    private void restartLoader(){
+    private void startBookIntent(String ean) {
+        Intent bookIntent = new Intent(getActivity(), BookService.class);
+        bookIntent.putExtra(BookService.EAN, ean);
+        bookIntent.setAction(BookService.FETCH_BOOK);
+        getActivity().startService(bookIntent);
+        AddBook.this.restartLoader();
+    }
+
+    private void restartLoader() {
         Loader<Object> loader = getLoaderManager().getLoader(LOADER_ID);
         if (loader != null && !loader.isReset()) {
             getLoaderManager().restartLoader(LOADER_ID, null, this);
@@ -160,13 +172,13 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
 
     @Override
     public android.support.v4.content.Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        if(lastEan == null || lastEan.length() != 13) {
+        if(loadedEan == null || loadedEan.length() != 13) {
             Log.e(LOG_TAG, "lastEan is not valid");
             return null;
         }
         return new CursorLoader(
                 getActivity(),
-                AlexandriaContract.BookEntry.buildFullBookUri(Long.parseLong(lastEan)),
+                AlexandriaContract.BookEntry.buildFullBookUri(Long.parseLong(loadedEan)),
                 null,
                 null,
                 null,
