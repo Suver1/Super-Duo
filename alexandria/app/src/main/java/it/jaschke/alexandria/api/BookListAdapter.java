@@ -4,6 +4,8 @@ package it.jaschke.alexandria.api;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;
+import android.util.Log;
+import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +20,7 @@ import it.jaschke.alexandria.services.DownloadImage;
  * Created by saj on 11/01/15.
  */
 public class BookListAdapter extends CursorAdapter {
-
+    private static final String LOG_TAG = BookListAdapter.class.getSimpleName();
 
     public static class ViewHolder {
         public final ImageView bookCover;
@@ -40,9 +42,13 @@ public class BookListAdapter extends CursorAdapter {
     public void bindView(View view, Context context, Cursor cursor) {
 
         ViewHolder viewHolder = (ViewHolder) view.getTag();
-
         String imgUrl = cursor.getString(cursor.getColumnIndex(AlexandriaContract.BookEntry.IMAGE_URL));
-        new DownloadImage(viewHolder.bookCover).execute(imgUrl);
+
+        if(imgUrl.length() != 0 && Patterns.WEB_URL.matcher(imgUrl).matches()){
+            new DownloadImage(viewHolder.bookCover).execute(imgUrl);
+        } else {
+            Log.v(LOG_TAG, "Could not find image URL");
+        }
 
         String bookTitle = cursor.getString(cursor.getColumnIndex(AlexandriaContract.BookEntry.TITLE));
         viewHolder.bookTitle.setText(bookTitle);
