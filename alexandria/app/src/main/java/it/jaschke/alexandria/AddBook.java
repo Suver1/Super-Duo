@@ -119,6 +119,10 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
             public void onClick(View view) {
                 ean.setText("");
                 ean.setHint(getResources().getString(R.string.input_hint));
+                clearFields();
+
+                CharSequence text = "The book was saved in your list of books.";
+                Toast.makeText(getActivity(), text, Toast.LENGTH_SHORT).show();
             }
         });
 
