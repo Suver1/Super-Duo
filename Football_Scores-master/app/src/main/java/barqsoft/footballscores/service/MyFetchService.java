@@ -39,11 +39,11 @@ public class MyFetchService extends IntentService
     @Override
     protected void onHandleIntent(Intent intent)
     {
-        getData("n2");
-        getData("p2");
+        getScoresData("n2");
+        getScoresData("p2");
     }
 
-    private void getData (String timeFrame)
+    private void getScoresData (String timeFrame)
     {
         //Creating fetch URL
         final String BASE_URL = "http://api.football-data.org/alpha/fixtures"; //Base URL
@@ -53,19 +53,19 @@ public class MyFetchService extends IntentService
         Uri fetch_build = Uri.parse(BASE_URL).buildUpon().
                 appendQueryParameter(QUERY_TIME_FRAME, timeFrame).build();
         //Log.v(LOG_TAG, "The url we are looking at is: "+fetch_build.toString()); //log spam
-        HttpURLConnection m_connection = null;
+        HttpURLConnection connection = null;
         BufferedReader reader = null;
         String JSON_data = null;
         //Opening Connection
         try {
             URL fetch = new URL(fetch_build.toString());
-            m_connection = (HttpURLConnection) fetch.openConnection();
-            m_connection.setRequestMethod("GET");
-            m_connection.addRequestProperty("X-Auth-Token", getString(R.string.api_key));
-            m_connection.connect();
+            connection = (HttpURLConnection) fetch.openConnection();
+            connection.setRequestMethod("GET");
+            connection.addRequestProperty("X-Auth-Token", getString(R.string.api_key));
+            connection.connect();
 
             // Read the input stream into a String
-            InputStream inputStream = m_connection.getInputStream();
+            InputStream inputStream = connection.getInputStream();
             StringBuffer buffer = new StringBuffer();
             if (inputStream == null) {
                 // Nothing to do.
@@ -94,9 +94,9 @@ public class MyFetchService extends IntentService
             Log.e(LOG_TAG,"Exception here" + e.getMessage());
         }
         finally {
-            if(m_connection != null)
+            if(connection != null)
             {
-                m_connection.disconnect();
+                connection.disconnect();
             }
             if (reader != null)
             {
@@ -121,7 +121,6 @@ public class MyFetchService extends IntentService
                     return;
                 }
 
-
                 processJSONdata(JSON_data, getApplicationContext(), true);
             } else {
                 //Could not Connect
@@ -133,7 +132,7 @@ public class MyFetchService extends IntentService
             Log.e(LOG_TAG,e.getMessage());
         }
     }
-    private void processJSONdata (String JSONdata,Context mContext, boolean isReal)
+    private void processJSONdata (String JSONdata, Context mContext, boolean isReal)
     {
         //JSON data
         // This set of league codes is for the 2015/2016 season. In fall of 2016, they will need to
