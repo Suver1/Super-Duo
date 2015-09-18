@@ -14,8 +14,8 @@ import android.widget.TextView;
 /**
  * Created by yehya khaled on 2/26/2015.
  */
-public class scoresAdapter extends CursorAdapter {
-    private static final String LOG_TAG = scoresAdapter.class.getSimpleName();
+public class ScoresAdapter extends CursorAdapter {
+    private static final String LOG_TAG = ScoresAdapter.class.getSimpleName();
     public static final int COL_HOME = 3;
     public static final int COL_AWAY = 4;
     public static final int COL_HOME_GOALS = 6;
@@ -27,7 +27,7 @@ public class scoresAdapter extends CursorAdapter {
     public static final int COL_MATCHTIME = 2;
     public double detail_match_id = 0;
     private String FOOTBALL_SCORES_HASHTAG = "#Football_Scores";
-    public scoresAdapter(Context context,Cursor cursor,int flags)
+    public ScoresAdapter(Context context,Cursor cursor,int flags)
     {
         super(context,cursor,flags);
     }

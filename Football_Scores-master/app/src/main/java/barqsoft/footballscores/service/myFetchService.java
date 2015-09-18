@@ -28,10 +28,10 @@ import barqsoft.footballscores.R;
 /**
  * Created by yehya khaled on 3/2/2015.
  */
-public class myFetchService extends IntentService
+public class MyFetchService extends IntentService
 {
     public static final String LOG_TAG = "myFetchService";
-    public myFetchService()
+    public MyFetchService()
     {
         super("myFetchService");
     }
@@ -41,8 +41,6 @@ public class myFetchService extends IntentService
     {
         getData("n2");
         getData("p2");
-
-        return;
     }
 
     private void getData (String timeFrame)
@@ -63,7 +61,7 @@ public class myFetchService extends IntentService
             URL fetch = new URL(fetch_build.toString());
             m_connection = (HttpURLConnection) fetch.openConnection();
             m_connection.setRequestMethod("GET");
-            m_connection.addRequestProperty("X-Auth-Token",getString(R.string.api_key));
+            m_connection.addRequestProperty("X-Auth-Token", getString(R.string.api_key));
             m_connection.connect();
 
             // Read the input stream into a String
@@ -71,6 +69,7 @@ public class myFetchService extends IntentService
             StringBuffer buffer = new StringBuffer();
             if (inputStream == null) {
                 // Nothing to do.
+                Log.e(LOG_TAG, "inputStream is null. return");
                 return;
             }
             reader = new BufferedReader(new InputStreamReader(inputStream));
@@ -84,9 +83,11 @@ public class myFetchService extends IntentService
             }
             if (buffer.length() == 0) {
                 // Stream was empty.  No point in parsing.
+                Log.e(LOG_TAG, "Stream was empty. return");
                 return;
             }
             JSON_data = buffer.toString();
+            Log.e(LOG_TAG, "JSON data: " + JSON_data);
         }
         catch (Exception e)
         {
