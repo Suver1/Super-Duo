@@ -16,9 +16,6 @@ import android.widget.ListView;
 
 import barqsoft.footballscores.service.MyFetchService;
 
-/**
- * A placeholder fragment containing a simple view.
- */
 public class MainScreenFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>
 {
     private static final String LOG_TAG = MainScreenFragment.class.getSimpleName();
@@ -29,6 +26,7 @@ public class MainScreenFragment extends Fragment implements LoaderManager.Loader
 
     public MainScreenFragment()
     {
+        // Runs once for each view generated in PagerFragment
     }
 
     private void update_scores()
@@ -43,14 +41,15 @@ public class MainScreenFragment extends Fragment implements LoaderManager.Loader
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              final Bundle savedInstanceState) {
+        // Update scores for this view and populate data
         update_scores();
-        Log.e(LOG_TAG, "updating scores");
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         final ListView score_list = (ListView) rootView.findViewById(R.id.scores_list);
         mAdapter = new ScoresAdapter(getActivity(),null,0);
         score_list.setAdapter(mAdapter);
         getLoaderManager().initLoader(SCORES_LOADER,null,this);
         mAdapter.detail_match_id = MainActivity.selected_match_id;
+        // Handle on click for items in the list of scores
         score_list.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
             @Override
@@ -76,14 +75,6 @@ public class MainScreenFragment extends Fragment implements LoaderManager.Loader
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor)
     {
         //Log.v(FetchScoreTask.LOG_TAG,"loader finished");
-        //cursor.moveToFirst();
-        /*
-        while (!cursor.isAfterLast())
-        {
-            Log.v(FetchScoreTask.LOG_TAG,cursor.getString(1));
-            cursor.moveToNext();
-        }
-        */
 
         int i = 0;
         cursor.moveToFirst();
