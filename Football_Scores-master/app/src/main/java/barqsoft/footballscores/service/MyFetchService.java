@@ -39,7 +39,8 @@ public class MyFetchService extends IntentService
     @Override
     protected void onHandleIntent(Intent intent)
     {
-        getScoresData("n2");
+        // n4 = get scores for the next four days. p2 = get scores from the two previous days.
+        getScoresData("n8");
         getScoresData("p2");
     }
 
@@ -52,7 +53,7 @@ public class MyFetchService extends IntentService
 
         Uri fetch_build = Uri.parse(BASE_URL).buildUpon().
                 appendQueryParameter(QUERY_TIME_FRAME, timeFrame).build();
-        //Log.v(LOG_TAG, "The url we are looking at is: "+fetch_build.toString()); //log spam
+        //Log.e(LOG_TAG, "The url we are looking at is: "+fetch_build.toString()); //log spam
         HttpURLConnection connection = null;
         BufferedReader reader = null;
         String JSON_data = null;
@@ -87,7 +88,7 @@ public class MyFetchService extends IntentService
                 return;
             }
             JSON_data = buffer.toString();
-            Log.e(LOG_TAG, "JSON data: " + JSON_data);
+            //Log.e(LOG_TAG, "JSON data: " + JSON_data);
         }
         catch (Exception e)
         {
@@ -137,6 +138,7 @@ public class MyFetchService extends IntentService
         //JSON data
         // This set of league codes is for the 2015/2016 season. In fall of 2016, they will need to
         // be updated. Feel free to use the codes
+        final String DUMMYLEAGUE = "357";
         final String BUNDESLIGA1 = "394";
         final String BUNDESLIGA2 = "395";
         final String LIGUE1 = "396";
@@ -193,6 +195,7 @@ public class MyFetchService extends IntentService
                 //add leagues here in order to have them be added to the DB.
                 // If you are finding no data in the app, check that this contains all the leagues.
                 // If it doesn't, that can cause an empty DB, bypassing the dummy data routine.
+                //if (League.equals(DUMMYLEAGUE)) {
                 if(     League.equals(PREMIER_LEAGUE)      ||
                         League.equals(SERIE_A)             ||
                         League.equals(BUNDESLIGA1)         ||
@@ -266,7 +269,7 @@ public class MyFetchService extends IntentService
             inserted_data = mContext.getContentResolver().bulkInsert(
                     DatabaseContract.BASE_CONTENT_URI,insert_data);
 
-            Log.e(LOG_TAG, "Successfully Inserted : " + String.valueOf(inserted_data));
+            //Log.e(LOG_TAG, "Successfully Inserted : " + String.valueOf(inserted_data));
         }
         catch (JSONException e)
         {
