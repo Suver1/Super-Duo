@@ -2,6 +2,7 @@ package barqsoft.footballscores;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.os.Build;
 import android.support.v4.widget.CursorAdapter;
@@ -48,10 +49,26 @@ public class ScoresAdapter extends CursorAdapter {
     {
         // Set score info in 'scores_list_item'
         final ViewHolder mHolder = (ViewHolder) view.getTag();
-        mHolder.home_name.setText(cursor.getString(COL_HOME));
-        mHolder.away_name.setText(cursor.getString(COL_AWAY));
-        mHolder.date.setText(cursor.getString(COL_MATCHTIME));
-        mHolder.score.setText(Utilies.getScores(cursor.getInt(COL_HOME_GOALS),cursor.getInt(COL_AWAY_GOALS)));
+        Resources resources = context.getResources();
+        String homeTeam = resources.getString(R.string.home_team);
+        String awayTeam = resources.getString(R.string.away_team);
+        String homeName = cursor.getString(COL_HOME);
+        String awayName = cursor.getString(COL_AWAY);
+        String matchTime = cursor.getString(COL_MATCHTIME);
+        // Scores description ex: Scores, Home team 1, Away team 2
+        String scoresDesc = "";
+        if (cursor.getInt(COL_HOME_GOALS) >= 0) {
+            scoresDesc = resources.getString(R.string.scores) + ", " +
+                    homeTeam + " " + cursor.getInt(COL_HOME_GOALS) + ", " +
+                    awayTeam + " " + cursor.getInt(COL_AWAY_GOALS);
+        }
+        // Set content description for better talkBack experience
+        view.setContentDescription(homeTeam + " " + homeName + ", " + awayTeam + " " + awayName +
+                ". " + scoresDesc + ". " + resources.getString(R.string.match_time) + " " + matchTime);
+        mHolder.home_name.setText(homeName);
+        mHolder.away_name.setText(awayName);
+        mHolder.date.setText(matchTime);
+        mHolder.score.setText(Utilies.getScores(cursor.getInt(COL_HOME_GOALS), cursor.getInt(COL_AWAY_GOALS)));
         mHolder.match_id = cursor.getDouble(COL_ID);
         mHolder.home_crest.setImageResource(Utilies.getTeamCrestByTeamName(
                 cursor.getString(COL_HOME)));
