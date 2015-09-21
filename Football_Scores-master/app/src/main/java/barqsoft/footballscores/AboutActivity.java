@@ -2,6 +2,8 @@ package barqsoft.footballscores;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +15,12 @@ public class AboutActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
+
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            // Set actionbar background color
+            actionBar.setBackgroundDrawable(ContextCompat.getDrawable(this, R.color.teal05));
+        }
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.container, new AboutFragment())
