@@ -89,13 +89,17 @@ public class ScoresAdapter extends CursorAdapter {
         {
             // Add detailed view
             //Log.v(LOG_TAG,"will insert extraView");
+            // TODO Scroll to view if bottom detailed view is clicked
             container.addView(v, 0, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT));
-            TextView match_day = (TextView) v.findViewById(R.id.matchday_textview);
-            match_day.setText(Utilies.getMatchDay(cursor.getInt(COL_MATCHDAY),
-                    cursor.getInt(COL_LEAGUE)));
-            TextView league = (TextView) v.findViewById(R.id.league_textview);
-            league.setText(Utilies.getLeague(cursor.getInt(COL_LEAGUE)));
+            TextView matchDayView = (TextView) v.findViewById(R.id.matchday_textview);
+            Integer matchDay = cursor.getInt(COL_MATCHDAY);
+            Integer league = cursor.getInt(COL_LEAGUE);
+            matchDayView.setText(Utilies.getMatchDay(matchDay, league));
+            TextView leagueView = (TextView) v.findViewById(R.id.league_textview);
+            leagueView.setText(Utilies.getLeague(league));
+            v.setContentDescription(Utilies.getLeague(league) + ", " +
+                    Utilies.getMatchDay(matchDay, league));
             Button share_button = (Button) v.findViewById(R.id.share_button);
             share_button.setOnClickListener(new View.OnClickListener() {
                 @Override
