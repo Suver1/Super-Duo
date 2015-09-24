@@ -81,7 +81,7 @@ public class ScoresAdapter extends CursorAdapter {
         // Prepare detailed view
         LayoutInflater vi = (LayoutInflater) context.getApplicationContext()
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View v = vi.inflate(R.layout.detail_fragment, null);
+        View v = vi.inflate(R.layout.detail_fragment, (ViewGroup) view.getParent());
         ViewGroup container = (ViewGroup) view.findViewById(R.id.details_fragment_container);
 
         // When a detailed view is clicked, the clicked match's id is sent to the adapter.
@@ -89,17 +89,17 @@ public class ScoresAdapter extends CursorAdapter {
         {
             // Add detailed view
             //Log.v(LOG_TAG,"will insert extraView");
-            // TODO Scroll to view if bottom detailed view is clicked
             container.addView(v, 0, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT));
-            TextView matchDayView = (TextView) v.findViewById(R.id.matchday_textview);
+            TextView matchDayView = (TextView) container.findViewById(R.id.matchday_textview);
             Integer matchDay = cursor.getInt(COL_MATCHDAY);
             Integer league = cursor.getInt(COL_LEAGUE);
             matchDayView.setText(Utilies.getMatchDay(matchDay, league));
-            TextView leagueView = (TextView) v.findViewById(R.id.league_textview);
+            TextView leagueView = (TextView) container.findViewById(R.id.league_textview);
             leagueView.setText(Utilies.getLeague(league));
-            v.setContentDescription(Utilies.getLeague(league) + ", " +
+            container.setContentDescription(Utilies.getLeague(league) + ", " +
                     Utilies.getMatchDay(matchDay, league));
+
             Button share_button = (Button) v.findViewById(R.id.share_button);
             share_button.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -118,6 +118,7 @@ public class ScoresAdapter extends CursorAdapter {
         }
 
     }
+    @SuppressWarnings("deprecation")
     public Intent createShareForecastIntent(String ShareText) {
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         if (Build.VERSION.SDK_INT >= 21) {
@@ -129,5 +130,4 @@ public class ScoresAdapter extends CursorAdapter {
         shareIntent.putExtra(Intent.EXTRA_TEXT, ShareText + FOOTBALL_SCORES_HASHTAG);
         return shareIntent;
     }
-
 }
