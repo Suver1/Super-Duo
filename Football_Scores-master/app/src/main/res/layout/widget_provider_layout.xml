@@ -52,5 +52,14 @@ Source: http://developer.android.com/guide/practices/ui_guidelines/widget_design
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
         </ListView>
+        <TextView
+            android:id="@+id/empty_widget_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:background="@color/white"
+            android:textColor="@color/teal05"
+            android:text="@string/empty_widget_view_text"
+            android:textSize="20sp" />
     </LinearLayout>
 </FrameLayout>
