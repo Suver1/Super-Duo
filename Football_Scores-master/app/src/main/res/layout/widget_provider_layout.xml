@@ -1,49 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
+<!-- Note that the most robust and resilient way to add margins to the widget is to wrap the
+widget frame and contents in a padded FrameLayout.
+Source: http://developer.android.com/guide/practices/ui_guidelines/widget_design.html -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_height="match_parent"
-    android:padding="@dimen/widget_margin"
-    android:background="@color/gray01">
+    android:layout_width="match_parent"
+    android:padding="@dimen/widget_margin">
     <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="@color/teal05"
-        android:padding="4dp">
-        <ImageView
-            android:id="@+id/widgetLogo"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:src="@drawable/ic_launcher"
-            android:layout_gravity="center_vertical"
-            android:contentDescription="@string/app_logo_desc"
-            android:paddingRight="4dp"
-            android:paddingEnd="4dp" />
+        android:layout_height="match_parent"
+        android:background="@color/gray01">
         <LinearLayout
-            android:id="@+id/widgetActionBar"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
-            <TextView
-                android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:background="@color/teal05"
+            android:padding="4dp">
+            <ImageView
+                android:id="@+id/widgetLogo"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/ic_launcher"
+                android:layout_gravity="center_vertical"
+                android:contentDescription="@string/app_logo_desc"
+                android:paddingRight="4dp"
+                android:paddingEnd="4dp" />
+            <LinearLayout
+                android:id="@+id/widgetActionBar"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@string/app_name"
-                android:textColor="@color/white"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
-            <TextView
-                android:id="@+id/widgetTopBarSubtitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Today's matches"
-                android:textColor="@color/white"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/app_name"
+                    android:textColor="@color/white"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+                <TextView
+                    android:id="@+id/widgetTopBarSubtitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Today's matches"
+                    android:textColor="@color/white"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+            </LinearLayout>
         </LinearLayout>
+        <ListView
+            android:id="@+id/widgetCollectionList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        </ListView>
     </LinearLayout>
-    <ListView
-        android:id="@+id/widgetCollectionList"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-    </ListView>
-</LinearLayout>
+</FrameLayout>
