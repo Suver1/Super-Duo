@@ -1,5 +1,7 @@
 package barqsoft.footballscores;
 
+import java.util.Calendar;
+
 /**
  * Created by yehya khaled on 3/3/2015.
  */
@@ -10,6 +12,8 @@ public class Utilies
     public static final int CHAMPIONS_LEAGUE = 362;
     public static final int PRIMERA_DIVISION = 358;
     public static final int BUNDESLIGA = 351;
+    public static long mLastTimeScoresDataFetched = 0;
+
     public static String getLeague(int league_num)
     {
         switch (league_num)
@@ -83,5 +87,15 @@ public class Utilies
             case "Stoke City FC" : return R.drawable.stoke_city;
             default: return R.drawable.no_icon;
         }
+    }
+
+    public static void setLastTimeScoresDataFetched ()
+    {
+        mLastTimeScoresDataFetched = Calendar.getInstance().getTimeInMillis();
+    }
+
+    public static long getLastTimeScoresDataFetched ()
+    {
+        return mLastTimeScoresDataFetched;
     }
 }

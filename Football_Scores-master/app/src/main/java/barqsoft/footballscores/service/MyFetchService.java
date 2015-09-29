@@ -18,30 +18,37 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 import java.util.Vector;
 
 import barqsoft.footballscores.DatabaseContract;
 import barqsoft.footballscores.R;
+import barqsoft.footballscores.Utilies;
 
 /**
  * Created by yehya khaled on 3/2/2015.
  */
 public class MyFetchService extends IntentService
 {
-    public static final String LOG_TAG = "myFetchService";
+    public static final String LOG_TAG = "MyFetchService";
     public MyFetchService()
     {
-        super("myFetchService");
+        super("MyFetchService");
     }
 
     @Override
     protected void onHandleIntent(Intent intent)
     {
-        // n4 = get scores for the next four days. p2 = get scores from the two previous days.
-        getScoresData("n8");
-        getScoresData("p2");
+        // Run on first load and every two hours
+        if (Utilies.getLastTimeScoresDataFetched() == 0 || Utilies.getLastTimeScoresDataFetched() <
+                Calendar.getInstance().getTimeInMillis() - 1000 * 60 * 60 * 2) {
+            Utilies.setLastTimeScoresDataFetched();
+            // n4 = get scores for the next four days. p2 = get scores from the two previous days.
+            getScoresData("n8");
+            getScoresData("p2");
+        }
     }
 
     private void getScoresData (String timeFrame)
@@ -53,7 +60,7 @@ public class MyFetchService extends IntentService
 
         Uri fetch_build = Uri.parse(BASE_URL).buildUpon().
                 appendQueryParameter(QUERY_TIME_FRAME, timeFrame).build();
-        //Log.e(LOG_TAG, "The url we are looking at is: "+fetch_build.toString()); //log spam
+        //Log.d(LOG_TAG, "fetching data from: "+fetch_build.toString()); //log spam
         HttpURLConnection connection = null;
         BufferedReader reader = null;
         String JSON_data = null;
