@@ -52,6 +52,10 @@ public class PagerFragment extends Fragment
     }
     private class MyPageAdapter extends FragmentStatePagerAdapter
     {
+        private int lastPage = -1;
+        private int counter = 0;
+        private boolean resetCounter = false;
+        private final int numPages = PagerFragment.NUM_PAGES - 1;
         @Override
         public Fragment getItem(int i)
         {
@@ -72,11 +76,50 @@ public class PagerFragment extends Fragment
         @Override
         public CharSequence getPageTitle(int position)
         {
-            return getDayName(getActivity(),System.currentTimeMillis()+((position-2)*86400000));
+            return getDayName(getActivity(), position);
         }
-        public String getDayName(Context context, long dateInMillis) {
+        public String getDayName(Context context, int position) {
             // If the date is today, return the localized version of "Today" instead of the actual
             // day name.
+
+            // Find the selected page position and add a string to the end of the page title
+            // Example. "Today" will become "Today's matches", but the previous and next page title
+            // will be "Yesterday" and "Tomorrow" respectively.
+            // This function runs three times for each swipe, once for each page, unless the first
+            // or last page is reached.
+            String titlePostfix = "";
+            if (counter == 0) { // First page
+                if (lastPage == 1 && position == 0) {
+                    // First page reached, (the user has swiped all the way to the left)
+                    titlePostfix = "'s matches";
+                    lastPage = 0;
+                    // First page will only count two pages, reset counter when it reaches 1
+                    resetCounter = true;
+                }
+                counter++;
+            }
+            else if (counter == 1) { // Second page
+                if (!resetCounter) {
+                    counter++;
+                    if (lastPage != 0 || lastPage == 0 && position == 1) {
+                        // Second page reached
+                        titlePostfix = "'s matches";
+                        lastPage = position;
+                        if (position == numPages) {
+                            // Last page reached, (the user has swiped all the way to the right)
+                            counter = 0;
+                        }
+                    }
+                } else {
+                    // Reset counter
+                    counter = 0;
+                    resetCounter = false;
+                }
+            } else { // Third page
+                counter = 0;
+            }
+
+            long dateInMillis = System.currentTimeMillis()+((position-2)*86400000);
 
             Time t = new Time();
             t.setToNow();
@@ -86,13 +129,13 @@ public class PagerFragment extends Fragment
             int currentJulianDay = Time.getJulianDay(System.currentTimeMillis(), t.gmtoff);
             //Log.e(LOG_TAG, "currentJulianDay: " + currentJulianDay);
             if (julianDay == currentJulianDay) {
-                return context.getString(R.string.today);
+                return context.getString(R.string.today) + titlePostfix;
             } else if ( julianDay == currentJulianDay +1 ) {
-                return context.getString(R.string.tomorrow);
+                return context.getString(R.string.tomorrow) + titlePostfix;
             }
              else if ( julianDay == currentJulianDay -1)
             {
-                return context.getString(R.string.yesterday);
+                return context.getString(R.string.yesterday) + titlePostfix;
             }
             else
             {
@@ -101,7 +144,7 @@ public class PagerFragment extends Fragment
                 // Otherwise, the format is just the day of the week (e.g "Wednesday".
                 SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE", Locale.US);
                 //Log.e(LOG_TAG, "dayFormat: " + dayFormat);
-                return dayFormat.format(dateInMillis);
+                return dayFormat.format(dateInMillis) + titlePostfix;
             }
         }
     }
