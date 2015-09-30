@@ -26,18 +26,18 @@ public class PagerFragment extends Fragment
     private static final String LOG_TAG = PagerFragment.class.getSimpleName();
     public static final int NUM_PAGES = 10;
     public ViewPager mPagerHandler;
-    private myPageAdapter mPagerAdapter;
+    private MyPageAdapter mPagerAdapter;
     private MainScreenFragment[] viewFragments = new MainScreenFragment[NUM_PAGES];
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
     {
         final View rootView = inflater.inflate(R.layout.pager_fragment, container, false);
         mPagerHandler = (ViewPager) rootView.findViewById(R.id.pager);
-        mPagerAdapter = new myPageAdapter(getChildFragmentManager());
+        mPagerAdapter = new MyPageAdapter(getChildFragmentManager());
         for (int i = 0;i < NUM_PAGES;i++)
         {
             Date fragmentDate = new Date(System.currentTimeMillis()+((i-2)*86400000));
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
             viewFragments[i] = new MainScreenFragment();
             viewFragments[i].setFragmentDate(format.format(fragmentDate));
         }
@@ -50,7 +50,7 @@ public class PagerFragment extends Fragment
 
         return rootView;
     }
-    private class myPageAdapter extends FragmentStatePagerAdapter
+    private class MyPageAdapter extends FragmentStatePagerAdapter
     {
         @Override
         public Fragment getItem(int i)
@@ -64,7 +64,7 @@ public class PagerFragment extends Fragment
             return NUM_PAGES;
         }
 
-        public myPageAdapter(FragmentManager fm)
+        public MyPageAdapter(FragmentManager fm)
         {
             super(fm);
         }
@@ -99,7 +99,7 @@ public class PagerFragment extends Fragment
                 Time time = new Time();
                 time.setToNow();
                 // Otherwise, the format is just the day of the week (e.g "Wednesday".
-                SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE");
+                SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE", Locale.US);
                 //Log.e(LOG_TAG, "dayFormat: " + dayFormat);
                 return dayFormat.format(dateInMillis);
             }
