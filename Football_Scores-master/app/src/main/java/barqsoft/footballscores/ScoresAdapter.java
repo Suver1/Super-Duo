@@ -106,7 +106,7 @@ public class ScoresAdapter extends CursorAdapter {
                 public void onClick(View v)
                 {
                     //add Share Action
-                    context.startActivity(createShareForecastIntent(mHolder.home_name.getText()+" "
+                    context.startActivity(createShareMatchIntent(mHolder.home_name.getText()+" "
                     +mHolder.score.getText()+" "+mHolder.away_name.getText() + " "));
                 }
             });
@@ -119,7 +119,7 @@ public class ScoresAdapter extends CursorAdapter {
 
     }
     @SuppressWarnings("deprecation")
-    public Intent createShareForecastIntent(String ShareText) {
+    public Intent createShareMatchIntent(String ShareText) {
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         if (Build.VERSION.SDK_INT >= 21) {
             shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
