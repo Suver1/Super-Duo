@@ -2,6 +2,7 @@ package barqsoft.footballscores;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
@@ -25,7 +26,7 @@ public class WidgetDataProvider implements RemoteViewsService.RemoteViewsFactory
 
     @Override
     public void onCreate() {
-        initData();
+        // ANR after 20 sec. Do heavy lifting in onDataSetChanged() or getViewAt().
     }
 
     @Override
@@ -36,6 +37,21 @@ public class WidgetDataProvider implements RemoteViewsService.RemoteViewsFactory
     @Override
     public void onDataSetChanged() {
         initData();
+
+        // Get latest matches from database.
+        ScoresDBHelper dbHelper = new ScoresDBHelper(mContext);
+        Cursor cursor = dbHelper.getReadableDatabase().query(DatabaseContract.SCORES_TABLE,
+                null, null, null, null, null, null);
+        if (cursor.moveToFirst()){
+            while(!cursor.isAfterLast()){
+                Log.d(LOG_TAG, cursor.getString(cursor.getColumnIndex("date")));
+                Log.d(LOG_TAG, cursor.getString(cursor.getColumnIndex("home")));
+                Log.d(LOG_TAG, cursor.getString(cursor.getColumnIndex("away")));
+                // TODO add data to collections
+                cursor.moveToNext();
+            }
+        }
+        cursor.close();
     }
 
     @Override
