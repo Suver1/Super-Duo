@@ -16,6 +16,8 @@ import barqsoft.footballscores.service.WidgetService;
  * http://dharmangsoni.blogspot.no/2014/03/collection-widget-with-event-handling.html
  *
  * AppWidgetProvider parses relevant fields out of the Intent that is received in onReceive().
+ * It holds all the logic for creating the widget views, filling the views with the correct data,
+ * and setting up the click listeners so the widget will respond to touch.
  */
 public class WidgetProvider extends AppWidgetProvider {
     private static final String LOG_TAG = WidgetProvider.class.getSimpleName();

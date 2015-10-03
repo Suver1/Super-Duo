@@ -7,8 +7,11 @@ import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by Andreas on 28.09.2015.
@@ -17,8 +20,14 @@ import java.util.List;
  */
 public class WidgetDataProvider implements RemoteViewsService.RemoteViewsFactory {
     private static final String LOG_TAG = WidgetDataProvider.class.getSimpleName();
-    private List<CharSequence> mCollections = new ArrayList();
+    private ArrayList<List> mCollections = new ArrayList();
     private Context mContext;
+
+    private static final int COL_MATCHTIME = 0;
+    private static final int COL_HOME = 1;
+    private static final int COL_AWAY = 2;
+    private static final int COL_HOME_GOALS = 3;
+    private static final int COL_AWAY_GOALS = 4;
 
     public WidgetDataProvider(Context context, Intent intent) {
         mContext = context;
@@ -36,22 +45,39 @@ public class WidgetDataProvider implements RemoteViewsService.RemoteViewsFactory
 
     @Override
     public void onDataSetChanged() {
-        initData();
+        // get current date for SQL query
+        String currentDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+        String[] selectionArgs = {currentDate};
 
         // Get latest matches from database.
         ScoresDBHelper dbHelper = new ScoresDBHelper(mContext);
         Cursor cursor = dbHelper.getReadableDatabase().query(DatabaseContract.SCORES_TABLE,
-                null, null, null, null, null, null);
-        if (cursor.moveToFirst()){
-            while(!cursor.isAfterLast()){
-                Log.d(LOG_TAG, cursor.getString(cursor.getColumnIndex("date")));
-                Log.d(LOG_TAG, cursor.getString(cursor.getColumnIndex("home")));
-                Log.d(LOG_TAG, cursor.getString(cursor.getColumnIndex("away")));
-                // TODO add data to collections
-                cursor.moveToNext();
+                null,
+                ScoresProvider.SCORES_BY_DATE,
+                selectionArgs,
+                null,
+                null,
+                null
+        );
+
+        if (cursor != null) {
+            // Add cursor data to a list and add list to collections array
+            // to be populated in getViewAt().
+            if (cursor.moveToFirst()) {
+                while (!cursor.isAfterLast()) {
+                    List<CharSequence> scoresData = new ArrayList();
+                    scoresData.add(COL_MATCHTIME, cursor.getString(ScoresAdapter.COL_MATCHTIME));
+                    scoresData.add(COL_HOME, cursor.getString(ScoresAdapter.COL_HOME));
+                    scoresData.add(COL_AWAY, cursor.getString(ScoresAdapter.COL_AWAY));
+                    scoresData.add(COL_HOME_GOALS, cursor.getString(ScoresAdapter.COL_HOME_GOALS));
+                    scoresData.add(COL_AWAY_GOALS, cursor.getString(ScoresAdapter.COL_AWAY_GOALS));
+
+                    mCollections.add(scoresData);
+                    cursor.moveToNext();
+                }
             }
+            cursor.close();
         }
-        cursor.close();
     }
 
     @Override
@@ -62,7 +88,18 @@ public class WidgetDataProvider implements RemoteViewsService.RemoteViewsFactory
     @Override
     public RemoteViews getViewAt(int position) {
         RemoteViews rv = new RemoteViews(mContext.getPackageName(), R.layout.widget_list_item);
-        rv.setTextViewText(R.id.widget_home_name, mCollections.get(position));
+
+        List<CharSequence> scoresData = mCollections.get(position);
+
+        rv.setTextViewText(R.id.widget_home_name, scoresData.get(COL_HOME));
+        rv.setTextViewText(R.id.widget_away_name, scoresData.get(COL_AWAY));
+
+        String score = " - ";
+        if (!scoresData.get(COL_HOME_GOALS).equals("-1")) {
+            score = scoresData.get(COL_HOME_GOALS) + " - " + scoresData.get(COL_AWAY_GOALS);
+        }
+        rv.setTextViewText(R.id.widget_score, score);
+        rv.setTextViewText(R.id.widget_match_time, scoresData.get(COL_MATCHTIME));
         return rv;
     }
 
@@ -84,12 +121,5 @@ public class WidgetDataProvider implements RemoteViewsService.RemoteViewsFactory
     @Override
     public boolean hasStableIds() {
         return true;
-    }
-
-    private void initData() {
-        mCollections.clear();
-        for (int i = 1; i <= 10; i++) {
-            mCollections.add("ListView item " + i);
-        }
     }
 }
