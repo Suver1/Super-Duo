@@ -3,6 +3,7 @@ package barqsoft.footballscores;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.Bundle;
 import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
@@ -61,7 +62,7 @@ public class WidgetDataProvider implements RemoteViewsService.RemoteViewsFactory
         );
 
         if (cursor != null) {
-            // Add cursor data to a list and add list to collections array
+            // Add cursor data to a temporary list and add the list to collections array
             // to be populated in getViewAt().
             if (cursor.moveToFirst()) {
                 while (!cursor.isAfterLast()) {
@@ -89,17 +90,25 @@ public class WidgetDataProvider implements RemoteViewsService.RemoteViewsFactory
     public RemoteViews getViewAt(int position) {
         RemoteViews rv = new RemoteViews(mContext.getPackageName(), R.layout.widget_list_item);
 
+        // Assign data to a temporary array and populate data to the remote view
         List<CharSequence> scoresData = mCollections.get(position);
-
         rv.setTextViewText(R.id.widget_home_name, scoresData.get(COL_HOME));
         rv.setTextViewText(R.id.widget_away_name, scoresData.get(COL_AWAY));
-
         String score = " - ";
         if (!scoresData.get(COL_HOME_GOALS).equals("-1")) {
             score = scoresData.get(COL_HOME_GOALS) + " - " + scoresData.get(COL_AWAY_GOALS);
         }
         rv.setTextViewText(R.id.widget_score, score);
         rv.setTextViewText(R.id.widget_match_time, scoresData.get(COL_MATCHTIME));
+
+        // Set item click event
+        final Intent fillInIntent = new Intent();
+        fillInIntent.setAction(WidgetProvider.ACTION_TOAST);
+        final Bundle bundle = new Bundle();
+        bundle.putString(WidgetProvider.EXTRA_STRING, (String) scoresData.get(COL_HOME));
+        fillInIntent.putExtras(bundle);
+        rv.setOnClickFillInIntent(R.id.widget_list_item, fillInIntent);
+
         return rv;
     }
 
