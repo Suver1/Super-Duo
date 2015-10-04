@@ -24,12 +24,12 @@ import barqsoft.footballscores.service.WidgetService;
 public class WidgetProvider extends AppWidgetProvider {
     private static final String LOG_TAG = WidgetProvider.class.getSimpleName();
     public static final String ACTION_TOAST = "barqsoft.footballscores.widgets.ACTION_TOAST";
-    public static final String EXTRA_STRING = "barqsoft.footballscores.widgets.EXTRA_STRING";
+    public static final String EXTRA_MESSAGE = "barqsoft.footballscores.widgets.EXTRA_STRING";
 
     @Override
     public void onReceive(Context context, Intent intent) {
         if (intent.getAction().equals(ACTION_TOAST)) {
-            String message = intent.getExtras().getString(EXTRA_STRING);
+            String message = intent.getExtras().getString(EXTRA_MESSAGE);
             Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
         }
 
