@@ -103,9 +103,10 @@ public class WidgetDataProvider implements RemoteViewsService.RemoteViewsFactory
 
         // Set item click event
         final Intent fillInIntent = new Intent();
-        fillInIntent.setAction(WidgetProvider.ACTION_TOAST);
+        fillInIntent.setAction(WidgetProvider.ACTION_START_ACTIVITY);
         final Bundle bundle = new Bundle();
-        bundle.putString(WidgetProvider.EXTRA_MESSAGE, (String) scoresData.get(COL_HOME));
+        bundle.putString(WidgetProvider.EXTRA_MESSAGE, (String) scoresData.get(COL_HOME) +
+                " vs " + (String) scoresData.get(COL_AWAY));
         fillInIntent.putExtras(bundle);
         rv.setOnClickFillInIntent(R.id.widget_list_item, fillInIntent);
 

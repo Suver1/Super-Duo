@@ -23,14 +23,18 @@ import barqsoft.footballscores.service.WidgetService;
  */
 public class WidgetProvider extends AppWidgetProvider {
     private static final String LOG_TAG = WidgetProvider.class.getSimpleName();
-    public static final String ACTION_TOAST = "barqsoft.footballscores.widgets.ACTION_TOAST";
+    public static final String ACTION_START_ACTIVITY = "barqsoft.footballscores.widgets.ACTION_START_ACTIVITY";
     public static final String EXTRA_MESSAGE = "barqsoft.footballscores.widgets.EXTRA_STRING";
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (intent.getAction().equals(ACTION_TOAST)) {
+        if (intent.getAction().equals(ACTION_START_ACTIVITY)) {
             String message = intent.getExtras().getString(EXTRA_MESSAGE);
             Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+            Intent mainActivity = new Intent(context, MainActivity.class);
+            mainActivity.putExtras(intent.getExtras());
+            mainActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(mainActivity);
         }
 
         super.onReceive(context, intent);
@@ -49,7 +53,7 @@ public class WidgetProvider extends AppWidgetProvider {
 
             // Add collection list item handler
             final Intent onItemClick = new Intent(context, WidgetProvider.class);
-            onItemClick.setAction(ACTION_TOAST);
+            onItemClick.setAction(ACTION_START_ACTIVITY);
             onItemClick.setData(Uri.parse(onItemClick.toUri(Intent.URI_INTENT_SCHEME)));
             final PendingIntent onClickPendingIntent = PendingIntent.getBroadcast(context, 0,
                     onItemClick, PendingIntent.FLAG_UPDATE_CURRENT);
