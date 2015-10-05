@@ -1,5 +1,6 @@
 package barqsoft.footballscores;
 
+import android.annotation.SuppressLint;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
@@ -40,6 +41,7 @@ public class WidgetProvider extends AppWidgetProvider {
         super.onReceive(context, intent);
     }
 
+    @SuppressLint("NewApi")
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         for (int widgetId : appWidgetIds) {

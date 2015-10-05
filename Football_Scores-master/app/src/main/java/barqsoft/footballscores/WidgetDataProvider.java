@@ -1,5 +1,6 @@
 package barqsoft.footballscores;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -19,6 +20,8 @@ import java.util.Locale;
  * Sources: http://developer.android.com/guide/topics/appwidgets/index.html
  * http://dharmangsoni.blogspot.no/2014/03/collection-widget-with-event-handling.html
  */
+
+@SuppressLint("NewApi")
 public class WidgetDataProvider implements RemoteViewsService.RemoteViewsFactory {
     private static final String LOG_TAG = WidgetDataProvider.class.getSimpleName();
     private ArrayList<List> mCollections = new ArrayList();
