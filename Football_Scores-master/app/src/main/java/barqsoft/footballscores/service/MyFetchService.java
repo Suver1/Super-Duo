@@ -41,7 +41,7 @@ public class MyFetchService extends IntentService
     @Override
     protected void onHandleIntent(Intent intent)
     {
-        // Run on first load and every two hours
+        // Run on first load and max every two hours
         if (Utilies.getLastTimeScoresDataFetched() == 0 || Utilies.getLastTimeScoresDataFetched() <
                 Calendar.getInstance().getTimeInMillis() - 1000 * 60 * 60 * 2) {
             Utilies.setLastTimeScoresDataFetched();
@@ -119,11 +119,11 @@ public class MyFetchService extends IntentService
         }
         try {
             if (JSON_data != null) {
-                //This bit is to check if the data contains any matches. If not, we call processJson on the dummy data
+                // This bit is to check if the data contains any matches. If not, we call processJson on the dummy data
                 JSONArray matches = new JSONObject(JSON_data).getJSONArray("fixtures");
                 if (matches.length() == 0) {
-                    //if there is no data, call the function on dummy data
-                    //this is expected behavior during the off season.
+                    // if there is no data, call the function on dummy data
+                    // this is expected behavior during the off season.
                     processJSONdata(getString(R.string.dummy_data), getApplicationContext(), false);
                     Log.d(LOG_TAG, "returning dummy data");
                     return;
@@ -142,7 +142,7 @@ public class MyFetchService extends IntentService
     }
     private void processJSONdata (String JSONdata, Context mContext, boolean isReal)
     {
-        //JSON data
+        // JSON data
         // This set of league codes is for the 2015/2016 season. In fall of 2016, they will need to
         // be updated. Feel free to use the codes
         final String DUMMYLEAGUE = "357";
@@ -203,11 +203,17 @@ public class MyFetchService extends IntentService
                 // If you are finding no data in the app, check that this contains all the leagues.
                 // If it doesn't, that can cause an empty DB, bypassing the dummy data routine.
                 //if (League.equals(DUMMYLEAGUE)) {
-                if(     League.equals(PREMIER_LEAGUE)      ||
+                if (    League.equals(PREMIER_LEAGUE)      ||
                         League.equals(SERIE_A)             ||
                         League.equals(BUNDESLIGA1)         ||
                         League.equals(BUNDESLIGA2)         ||
-                        League.equals(PRIMERA_DIVISION)     )
+                        League.equals(PRIMERA_DIVISION)    ||
+                        League.equals(SEGUNDA_DIVISION)    ||
+                        League.equals(LIGUE2)              ||
+                        League.equals(PRIMERA_LIGA)        ||
+                        League.equals(EREDIVISIE)          ||
+                        League.equals(LIGUE1)              ||
+                        League.equals(Bundesliga3)  )
                 {
                     match_id = match_data.getJSONObject(LINKS).getJSONObject(SELF).
                             getString("href");
