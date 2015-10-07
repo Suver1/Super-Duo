@@ -62,7 +62,7 @@ public class MyFetchService extends IntentService
 
         Uri fetch_build = Uri.parse(BASE_URL).buildUpon().
                 appendQueryParameter(QUERY_TIME_FRAME, timeFrame).build();
-        //Log.d(LOG_TAG, "fetching data from: "+fetch_build.toString()); //log spam
+        Log.d(LOG_TAG, "fetching data from: "+fetch_build.toString()); //log spam
         HttpURLConnection connection = null;
         BufferedReader reader = null;
         String JSON_data = null;
@@ -126,8 +126,8 @@ public class MyFetchService extends IntentService
                 if (matches.length() == 0) {
                     // if there is no data, call the function on dummy data
                     // this is expected behavior during the off season.
-                    processJSONdata(getString(R.string.dummy_data), getApplicationContext(), false);
-                    Log.d(LOG_TAG, "returning dummy data");
+                    processJSONdata(getString(R.string.dummy_data2), getApplicationContext(), false);
+                    //Log.d(LOG_TAG, "returning dummy data");
                     return;
                 }
 
@@ -276,7 +276,7 @@ public class MyFetchService extends IntentService
             values.toArray(insert_data);
             int inserted_data = mContext.getContentResolver().bulkInsert(
                     DatabaseContract.BASE_CONTENT_URI,insert_data);
-            Log.d(LOG_TAG, "Successfully Inserted : " + String.valueOf(inserted_data));
+            //Log.d(LOG_TAG, "Successfully Inserted : " + String.valueOf(inserted_data));
         }
         catch (JSONException e)
         {

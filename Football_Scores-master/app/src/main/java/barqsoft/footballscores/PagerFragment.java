@@ -42,7 +42,7 @@ public class PagerFragment extends Fragment
             viewFragments[i].setFragmentDate(format.format(fragmentDate));
         }
         mPagerHandler.setAdapter(mPagerAdapter);
-        mPagerHandler.setCurrentItem(MainActivity.current_fragment);
+        mPagerHandler.setCurrentItem(MainActivity.current_fragment); // Set current selected page
 
         // Set color to Pager's tab strip
         PagerTabStrip pagerTabStrip = (PagerTabStrip) rootView.findViewById(R.id.pager_header);

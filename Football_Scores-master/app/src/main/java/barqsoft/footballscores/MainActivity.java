@@ -1,6 +1,9 @@
 package barqsoft.footballscores;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
@@ -8,6 +11,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 public class MainActivity extends ActionBarActivity
 {
@@ -26,13 +30,31 @@ public class MainActivity extends ActionBarActivity
             // Set actionbar background color
             actionBar.setBackgroundDrawable(ContextCompat.getDrawable(this, R.color.teal05));
         }
-        Log.d(LOG_TAG, "Reached MainActivity onCreate");
-        if (savedInstanceState == null) {
+
+        Intent intent = getIntent();
+        Bundle extras = intent.getExtras();
+        if (extras != null && intent.getAction() != null &&
+                intent.getAction().equals(WidgetProvider.ACTION_START_ACTIVITY)) {
+            // Activity launched by widget, open selected match item id
+            selected_match_id = extras.getInt(WidgetProvider.EXTRA_ID);
+            getIntent().removeExtra(WidgetProvider.EXTRA_ID);
+            current_fragment = 2; // Set today's pager item
+            my_main = new PagerFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.container, my_main)
+                    .commit();
+        } else if (savedInstanceState == null) {
             my_main = new PagerFragment();
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.container, my_main)
                     .commit();
         }
+    }
+
+    @Override
+    public void onResume() {
+        isOnline();
+        super.onResume();
     }
 
 
@@ -83,5 +105,19 @@ public class MainActivity extends ActionBarActivity
         selected_match_id = savedInstanceState.getInt("Selected_match");
         my_main = (PagerFragment) getSupportFragmentManager().getFragment(savedInstanceState,"my_main");
         super.onRestoreInstanceState(savedInstanceState);
+    }
+
+    // Check the Network Connection. (permission needed)
+    // Source: http://developer.android.com/intl/ko/training/basics/network-ops/connecting.html
+    private Boolean isOnline() {
+        ConnectivityManager connMgr = (ConnectivityManager)
+                getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        if (networkInfo != null && networkInfo.isConnected()) {
+            return true;
+        } else {
+            Toast.makeText(this, "Network connection lost. Please reconnect.", Toast.LENGTH_LONG).show();
+            return false;
+        }
     }
 }

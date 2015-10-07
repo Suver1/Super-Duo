@@ -32,6 +32,7 @@ public class WidgetDataProvider implements RemoteViewsService.RemoteViewsFactory
     private static final int COL_AWAY = 2;
     private static final int COL_HOME_GOALS = 3;
     private static final int COL_AWAY_GOALS = 4;
+    private static final int COL_ID = 5;
 
     public WidgetDataProvider(Context context, Intent intent) {
         mContext = context;
@@ -75,6 +76,7 @@ public class WidgetDataProvider implements RemoteViewsService.RemoteViewsFactory
                     scoresData.add(COL_AWAY, cursor.getString(ScoresAdapter.COL_AWAY));
                     scoresData.add(COL_HOME_GOALS, cursor.getString(ScoresAdapter.COL_HOME_GOALS));
                     scoresData.add(COL_AWAY_GOALS, cursor.getString(ScoresAdapter.COL_AWAY_GOALS));
+                    scoresData.add(COL_ID, cursor.getString(ScoresAdapter.COL_ID));
 
                     mCollections.add(scoresData);
                     cursor.moveToNext();
@@ -108,8 +110,7 @@ public class WidgetDataProvider implements RemoteViewsService.RemoteViewsFactory
         final Intent fillInIntent = new Intent();
         fillInIntent.setAction(WidgetProvider.ACTION_START_ACTIVITY);
         final Bundle bundle = new Bundle();
-        bundle.putString(WidgetProvider.EXTRA_MESSAGE, (String) scoresData.get(COL_HOME) +
-                " vs " + (String) scoresData.get(COL_AWAY));
+        bundle.putInt(WidgetProvider.EXTRA_ID, Integer.parseInt(scoresData.get(COL_ID).toString()));
         fillInIntent.putExtras(bundle);
         rv.setOnClickFillInIntent(R.id.widget_list_item, fillInIntent);
 

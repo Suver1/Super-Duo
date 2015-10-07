@@ -128,8 +128,14 @@ public class ScoresProvider extends ContentProvider
             default: throw new UnsupportedOperationException("Unknown Uri" + uri);
         }
         // Tell the cursor what uri to watch, so it knows when it's source data changes
-        retCursor.setNotificationUri(getContext().getContentResolver(),uri);
-        return retCursor;
+
+        if (getContext() != null) {
+            retCursor.setNotificationUri(getContext().getContentResolver(), uri);
+            return retCursor;
+        } else {
+            Log.e(LOG_TAG, "Could not get context.");
+            return null;
+        }
     }
 
     @Override

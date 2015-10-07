@@ -25,14 +25,13 @@ import barqsoft.footballscores.service.WidgetService;
 public class WidgetProvider extends AppWidgetProvider {
     private static final String LOG_TAG = WidgetProvider.class.getSimpleName();
     public static final String ACTION_START_ACTIVITY = "barqsoft.footballscores.widgets.ACTION_START_ACTIVITY";
-    public static final String EXTRA_MESSAGE = "barqsoft.footballscores.widgets.EXTRA_STRING";
+    public static final String EXTRA_ID = "barqsoft.footballscores.widgets.EXTRA_ID";
 
     @Override
     public void onReceive(Context context, Intent intent) {
         if (intent.getAction().equals(ACTION_START_ACTIVITY)) {
-            String message = intent.getExtras().getString(EXTRA_MESSAGE);
-            Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
             Intent mainActivity = new Intent(context, MainActivity.class);
+            mainActivity.setAction(ACTION_START_ACTIVITY);
             mainActivity.putExtras(intent.getExtras());
             mainActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(mainActivity);
