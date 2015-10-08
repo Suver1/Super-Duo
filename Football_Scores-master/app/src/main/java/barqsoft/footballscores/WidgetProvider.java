@@ -60,6 +60,9 @@ public class WidgetProvider extends AppWidgetProvider {
                     onItemClick, PendingIntent.FLAG_UPDATE_CURRENT);
             remoteViews.setPendingIntentTemplate(R.id.widgetCollectionList, onClickPendingIntent);
 
+            // The empty view is displayed when the collection has no items.
+            remoteViews.setEmptyView(R.id.widgetCollectionList, R.id.emptyWidgetView);
+
             appWidgetManager.updateAppWidget(widgetId, remoteViews);
         }
 
