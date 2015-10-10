@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Football Scores</string>
-    <string name="app_logo_desc">Football Scores logo</string>
+    <string name="app_name" translatable="false">Football Scores</string>
+    <string name="app_logo_desc" translatable="false">Football Scores logo</string>
     <string name="action_settings">Settings</string>
     <string name="test_text">Test</string>
     <string name="today">Today</string>
     <string name="yesterday">Yesterday</string>
     <string name="tomorrow">Tomorrow</string>
-    <string name="champions_league">UEFA Champions League</string>
-    <string name="bundesliga">Bundesliga</string>
-    <string name="premierleague">Premier League</string>
-    <string name="primeradivison">Primera Division</string>
-    <string name="seriaa">Serie A</string>
+    <string name="champions_league" translatable="false">UEFA Champions League</string>
+    <string name="bundesliga" translatable="false">Bundesliga</string>
+    <string name="premierleague" translatable="false">Premier League</string>
+    <string name="primeradivison" translatable="false">Primera Division</string>
+    <string name="seriaa" translatable="false">Serie A</string>
     <string name="matchday_text">Match day</string>
     <string name="match_time">Match time</string>
     <string name="group_stage_text">Group stages</string>
