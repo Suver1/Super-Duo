@@ -34,6 +34,7 @@ public class ScoresAdapter extends CursorAdapter {
         super(context,cursor,flags);
     }
 
+    // Inflate a new view template
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent)
     {
@@ -44,6 +45,7 @@ public class ScoresAdapter extends CursorAdapter {
         return mItem;
     }
 
+    // Bind all data to a given view to populate the template content for the item
     @Override
     public void bindView(View view, final Context context, Cursor cursor)
     {
