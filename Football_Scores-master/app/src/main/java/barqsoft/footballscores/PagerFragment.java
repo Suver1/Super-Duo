@@ -95,6 +95,7 @@ public class PagerFragment extends Fragment
                     lastPage = 0;
                     // First page will only count two pages, reset counter when it reaches 1
                     resetCounter = true;
+                    MainActivity.current_fragment = 0;
                 }
                 counter++;
             }
@@ -108,6 +109,9 @@ public class PagerFragment extends Fragment
                         if (position == numPages) {
                             // Last page reached, (the user has swiped all the way to the right)
                             counter = 0;
+                            MainActivity.current_fragment = numPages;
+                        } else {
+                            MainActivity.current_fragment = position;
                         }
                     }
                 } else {
