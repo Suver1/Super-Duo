@@ -241,7 +241,7 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode != 0) {
+        if (data != null && data.getExtras().containsKey("EAN13")) {
             // Set ean in the edit text field, which in turn triggers search.
             ean.setText(data.getExtras().getString("EAN13"));
             ean.setHint("");
