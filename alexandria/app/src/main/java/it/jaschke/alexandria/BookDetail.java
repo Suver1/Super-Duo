@@ -2,6 +2,7 @@ package it.jaschke.alexandria;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -32,6 +33,7 @@ public class BookDetail extends Fragment implements LoaderManager.LoaderCallback
     private String ean;
     private String bookTitle;
     private ShareActionProvider shareActionProvider;
+    private boolean mHasShareActionProvider = false;
 
     public BookDetail(){
     }
@@ -40,6 +42,9 @@ public class BookDetail extends Fragment implements LoaderManager.LoaderCallback
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        if (savedInstanceState != null && savedInstanceState.containsKey("hasShareActionProvider")) {
+            mHasShareActionProvider = savedInstanceState.getBoolean("hasShareActionProvider");
+        }
     }
 
 
@@ -76,6 +81,14 @@ public class BookDetail extends Fragment implements LoaderManager.LoaderCallback
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        if (shareActionProvider != null) {
+            outState.putBoolean("hasShareActionProvider", true);
+        }
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
     public android.support.v4.content.Loader<Cursor> onCreateLoader(int id, Bundle args) {
         return new CursorLoader(
                 getActivity(),
@@ -96,11 +109,18 @@ public class BookDetail extends Fragment implements LoaderManager.LoaderCallback
         bookTitle = data.getString(data.getColumnIndex(AlexandriaContract.BookEntry.TITLE));
         ((TextView) rootView.findViewById(R.id.fullBookTitle)).setText(bookTitle);
 
-        Intent shareIntent = new Intent(Intent.ACTION_SEND);
-        shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
-        shareIntent.setType("text/plain");
-        shareIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_text) + bookTitle);
-        shareActionProvider.setShareIntent(shareIntent);
+        // Only set share intent once. Prevents crash on screen rotation
+        if (!mHasShareActionProvider) {
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
+            } else {
+                shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+            }
+            shareIntent.setType("text/plain");
+            shareIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_text) + bookTitle);
+            shareActionProvider.setShareIntent(shareIntent);
+        }
 
         String bookSubTitle = data.getString(data.getColumnIndex(AlexandriaContract.BookEntry.SUBTITLE));
         ((TextView) rootView.findViewById(R.id.fullBookSubTitle)).setText(bookSubTitle);
