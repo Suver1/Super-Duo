@@ -21,6 +21,7 @@
     <string name="semi_final">Semi Final</string>
     <string name="final_text">Final</string>
     <string name="share_text">Share</string>
+    <string name="share_desc">Share this match</string>
     <string name="home_team">Home team</string>
     <string name="away_team">Away team</string>
     <string name="scores">Scores</string>
