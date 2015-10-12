@@ -96,11 +96,11 @@ public class ScoresAdapter extends CursorAdapter {
             TextView matchDayView = (TextView) container.findViewById(R.id.matchday_textview);
             Integer matchDay = cursor.getInt(COL_MATCHDAY);
             Integer league = cursor.getInt(COL_LEAGUE);
-            matchDayView.setText(Utilies.getMatchDay(matchDay, league));
+            matchDayView.setText(Utilies.getMatchDay(context, matchDay, league));
             TextView leagueView = (TextView) container.findViewById(R.id.league_textview);
-            leagueView.setText(Utilies.getLeague(league));
-            container.setContentDescription(Utilies.getLeague(league) + ", " +
-                    Utilies.getMatchDay(matchDay, league));
+            leagueView.setText(Utilies.getLeague(context, league));
+            container.setContentDescription(Utilies.getLeague(context, league) + ", " +
+                    Utilies.getMatchDay(context, matchDay, league));
 
             Button share_button = (Button) v.findViewById(R.id.share_button);
             share_button.setOnClickListener(new View.OnClickListener() {

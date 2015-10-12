@@ -91,7 +91,7 @@ public class PagerFragment extends Fragment
             if (counter == 0) { // First page
                 if (lastPage == 1 && position == 0) {
                     // First page reached, (the user has swiped all the way to the left)
-                    titlePostfix = "'s matches";
+                    titlePostfix = getResources().getString(R.string.pageTitlePostfix);
                     lastPage = 0;
                     // First page will only count two pages, reset counter when it reaches 1
                     resetCounter = true;
@@ -104,7 +104,7 @@ public class PagerFragment extends Fragment
                     counter++;
                     if (lastPage != 0 || lastPage == 0 && position == 1) {
                         // Second page reached
-                        titlePostfix = "'s matches";
+                        titlePostfix = getResources().getString(R.string.pageTitlePostfix);
                         lastPage = position;
                         if (position == numPages) {
                             // Last page reached, (the user has swiped all the way to the right)
